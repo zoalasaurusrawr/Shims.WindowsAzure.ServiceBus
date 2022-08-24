@@ -5,6 +5,11 @@
 
 A path forward for WindowsAzure.ServiceBus users that are moving to modern .NET
 
+## Getting Started
+
+1. Uninstall WindowsAzure.ServiceBus
+2. Install Shims.WindowsAzure.ServiceBus `dotnet package add Shims.WindowsAzure.ServiceBus`
+
 ## Compatibility
 
 WindowsAzure.ServiceBus >= 6.X
