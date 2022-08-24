@@ -6,6 +6,8 @@
     <Nullable>enable</Nullable>
 	<LangVersion>preview</LangVersion>
 	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	<AssemblyVersion>6.2.2</AssemblyVersion>
+	<Version>6.2.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
