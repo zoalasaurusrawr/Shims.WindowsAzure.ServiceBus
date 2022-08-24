@@ -9,7 +9,7 @@ A path forward for WindowsAzure.ServiceBus users that are moving to modern .NET
 
 1. Uninstall WindowsAzure.ServiceBus
 2. Install Shims.WindowsAzure.ServiceBus `dotnet package add Shims.WindowsAzure.ServiceBus`
-3. Checkout the .NET Framework and .NET sample runners to see what's supported so far.
+3. Checkout the [.NET Framework and .NET sample runners](https://github.com/zoeysaurusrex/WindowsAzure.ServiceBus.Shims/blob/main/src/WindowsAzure.ServiceBus.Net.Runner/Program.cs) to see what's supported so far.
 
 ## Compatibility
 
