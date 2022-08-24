@@ -1,48 +1,44 @@
-﻿using Microsoft.Azure;
-using Microsoft.ServiceBus;
+﻿using System.Text;
 using Microsoft.ServiceBus.Messaging;
+using WindowsAzure.ServiceBus.NetFx.Runner;
 
 class Program
 {
     public static void Main()
     {
-        //string connectionString = CloudConfigurationManager.GetSetting("Microsoft.ServiceBus.ConnectionString");
-
-        //var namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
-
-        //if (!namespaceManager.QueueExists("testqueue"))
-        //{
-        //    namespaceManager.CreateQueue("testqueue");
-        //}
-
         StartQueueClient();
         StartTopicClient();
+        Console.Read();
     }
 
     private static void StartQueueClient()
     {
-        var connectionString = "<Service Bus Namespace Primary or Secondary Connection String>";
-        var queueName = "<Your queue name>";
+        var connectionString = "";
+        var queueName = "test-queue";
 
         var client = QueueClient.CreateFromConnectionString(connectionString, queueName);
-        var message = new BrokeredMessage("Test Message");
+        var message = new BrokeredMessage(new TestModel("Test"));
 
         client.Send(message);
 
         client.OnMessage(msg =>
         {
-            Console.WriteLine(String.Format("Message body: {0}", msg.GetBody<String>()));
+            var body = msg.GetBody<Stream>();
+            var bodyString = new StreamReader(body, Encoding.UTF8).ReadToEnd();
+
+            Console.WriteLine(String.Format("Message body: {0}", bodyString));
             Console.WriteLine(String.Format("Message id: {0}", msg.MessageId));
         });
     }
 
     private static void StartTopicClient()
     {
-        var connectionString = "<Service Bus Namespace Primary or Secondary Connection String>";
-        var topicName = "topic-name";
+        var connectionString = "";
+        var topicName = "test-topic";
+        var subName = "test-sub";
 
         var client = TopicClient.CreateFromConnectionString(connectionString, topicName);
-        var message = new BrokeredMessage("Test Message");
+        var message = new BrokeredMessage(new TestModel("Test"));
 
         client.Send(message);
 
@@ -53,14 +49,14 @@ class Program
             AutoRenewTimeout = TimeSpan.FromMinutes(1)
         };
 
-        SubscriptionClient Client = SubscriptionClient.CreateFromConnectionString(connectionString, "topic-path", "topic-name");
+        SubscriptionClient Client = SubscriptionClient.CreateFromConnectionString(connectionString, topicName, subName);
 
         Client.OnMessage((msg) =>
         {
             try
             {
                 // Process message from subscription.
-                Console.WriteLine("Body: " + msg.GetBody<string>());
+                Console.WriteLine("Body: " + msg.GetBody<TestModel>());
                 Console.WriteLine("MessageID: " + msg.MessageId);
                 Console.WriteLine("Message Number: " +
                 msg.Properties["MessageNumber"]);
