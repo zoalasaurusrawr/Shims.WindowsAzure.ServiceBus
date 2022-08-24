@@ -1,6 +1,6 @@
 # WindowsAzure.ServiceBus.Shims
 
-![Github.io linkchecker](https://img.shields.io/nuget/v/Shims.WindowsAzure.ServiceBus)
+[![NuGet version (Shims.WindowsAzure.ServiceBus)](https://img.shields.io/nuget/v/Shims.WindowsAzure.ServiceBus.svg?style=flat-square)](https://www.nuget.org/packages/Shims.WindowsAzure.ServiceBus/)
 
 
 A path forward for WindowsAzure.ServiceBus users that are moving to modern .NET
