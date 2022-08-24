@@ -4,15 +4,15 @@ namespace Microsoft.ServiceBus.Messaging;
 
 public class SubscriptionClient : ServiceBusClient, IAcknowledgeMessageClient
 {
-    public SubscriptionClient(string connectionString, string topicPath, string name)
+    public SubscriptionClient(string connectionString, string topicPath, string subscriptionName)
         : base(connectionString)
     {
         _topicPath = topicPath ?? throw new ArgumentNullException(nameof(topicPath));
-        _name = name ?? throw new ArgumentNullException(nameof(name));
+        _subscriptionName = subscriptionName ?? throw new ArgumentNullException(nameof(subscriptionName));
     }
 
     private readonly string _topicPath;
-    private readonly string _name;
+    private readonly string _subscriptionName;
     private Action<BrokeredMessage>? _callback;
     private ServiceBusReceiver? _receiver;
     protected ServiceBusReceiver Receiver
@@ -20,7 +20,7 @@ public class SubscriptionClient : ServiceBusClient, IAcknowledgeMessageClient
         get
         {
             if (_receiver == null)
-                _receiver = base.CreateReceiver(_topicPath, _name);
+                _receiver = base.CreateReceiver(_topicPath, _subscriptionName);
 
             return _receiver;
         }

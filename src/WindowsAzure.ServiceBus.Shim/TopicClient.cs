@@ -24,9 +24,9 @@ public class TopicClient : ServiceBusClient
         }
     }
 
-    public static QueueClient CreateFromConnectionString(string connectionString, string topicPath)
+    public static TopicClient CreateFromConnectionString(string connectionString, string topicPath)
     {
-        var result = new QueueClient(connectionString, topicPath);
+        var result = new TopicClient(connectionString, topicPath);
         return result;
     }
 
