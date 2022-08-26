@@ -41,10 +41,20 @@ var tokenProvider = TokenProvider.CreateTokenProvider();
 
 WindowsAzure.ServiceBus >= 6.X
 - TopicClient
+  - CreateFromConnectionString
+  - Send
+  
 - QueueClient
+  - CreateFromConnectionString
+  - Send
+  
 - SubscriptionClient
+  - CreateFromConnectionString
+  - Send
+  
 - NamespaceManager
   - Credentials through DefaultAzureCredential
+  - CRUD operations for Topics, Subscriptions, and Queues (Sync and Async)
 
 ***
 
@@ -61,8 +71,14 @@ WindowsAzure.ServiceBus >= 6.X
 
 ## Roadmap
 
-- Relay Management via NamespaceManager
-- Replace ShimMessagePump with a safer impl
+- NamespaceManager
+  - Relay CRUD operations
+- QueueClient
+  - Async Send
+- TopicClient
+  - Async Send
+- SubscriptionClient
+  - Replace ShimMessagePump with a safer impl
 
 ***
 
