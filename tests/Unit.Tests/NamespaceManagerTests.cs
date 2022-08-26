@@ -2,7 +2,7 @@ using Xunit;
 
 namespace Unit.Tests;
 
-public class UnitTest1
+public class NamespaceManagerTests
 {
     [Fact]
     public void Test1()

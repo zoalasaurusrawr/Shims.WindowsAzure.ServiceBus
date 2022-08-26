@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "WindowsAzure.ServiceBus.Net.Runner": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

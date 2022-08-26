@@ -11,7 +11,7 @@ internal sealed class DataContractBinarySerializer : XmlObjectSerializer
         dataContractSerializer = new DataContractSerializer(type);
     }
 
-    public override object ReadObject(Stream stream)
+    public override object? ReadObject(Stream stream)
     {
         if (stream == null)
         {
@@ -21,7 +21,7 @@ internal sealed class DataContractBinarySerializer : XmlObjectSerializer
         return ReadObject(XmlDictionaryReader.CreateBinaryReader(stream, XmlDictionaryReaderQuotas.Max));
     }
 
-    public override void WriteObject(Stream stream, object graph)
+    public override void WriteObject(Stream stream, object? graph)
     {
         if (stream == null)
         {
@@ -33,7 +33,7 @@ internal sealed class DataContractBinarySerializer : XmlObjectSerializer
         xmlDictionaryWriter.Flush();
     }
 
-    public override void WriteObject(XmlDictionaryWriter writer, object graph)
+    public override void WriteObject(XmlDictionaryWriter writer, object? graph)
     {
         if (writer == null)
         {
@@ -48,7 +48,7 @@ internal sealed class DataContractBinarySerializer : XmlObjectSerializer
         return dataContractSerializer.IsStartObject(reader);
     }
 
-    public override object ReadObject(XmlDictionaryReader reader, bool verifyObjectName)
+    public override object? ReadObject(XmlDictionaryReader reader, bool verifyObjectName)
     {
         return dataContractSerializer.ReadObject(reader, verifyObjectName);
     }
@@ -58,12 +58,12 @@ internal sealed class DataContractBinarySerializer : XmlObjectSerializer
         dataContractSerializer.WriteEndObject(writer);
     }
 
-    public override void WriteObjectContent(XmlDictionaryWriter writer, object graph)
+    public override void WriteObjectContent(XmlDictionaryWriter writer, object? graph)
     {
         dataContractSerializer.WriteObjectContent(writer, graph);
     }
 
-    public override void WriteStartObject(XmlDictionaryWriter writer, object graph)
+    public override void WriteStartObject(XmlDictionaryWriter writer, object? graph)
     {
         dataContractSerializer.WriteStartObject(writer, graph);
     }
