@@ -1,5 +1,7 @@
 # WindowsAzure.ServiceBus.Shims
 
+[![.NET](https://github.com/zoeysaurusrex/Shims.WindowsAzure.ServiceBus/actions/workflows/dotnet.yml/badge.svg)](https://github.com/zoeysaurusrex/Shims.WindowsAzure.ServiceBus/actions/workflows/dotnet.yml)
+
 [![NuGet version (Shims.WindowsAzure.ServiceBus)](https://img.shields.io/nuget/v/Shims.WindowsAzure.ServiceBus.svg?style=flat-square)](https://www.nuget.org/packages/Shims.WindowsAzure.ServiceBus/)
 
 
