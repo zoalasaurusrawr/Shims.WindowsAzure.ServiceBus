@@ -299,7 +299,7 @@ public class NamespaceManager
     {
         var parameters = new SBTopic();
         var topic = ServiceBusClient.Topics.CreateOrUpdate(ResourceIdentifier.ResourceGroupName, NamespaceInfo.Name, path, parameters);
-        return (TopicDescription)topic;
+        return topic as TopicDescription;
     }
 
     public TopicDescription CreateTopic(TopicDescription topicDescription)
@@ -366,8 +366,8 @@ public class NamespaceManager
     public QueueDescription CreateQueue(string name)
     {
         var parameters = new SBQueue();
-        var sbQueue = ServiceBusClient.Queues.CreateOrUpdate(ResourceIdentifier.ResourceGroupName, NamespaceInfo.Name, name, parameters);
-        return (QueueDescription)sbQueue;
+        var queue = ServiceBusClient.Queues.CreateOrUpdate(ResourceIdentifier.ResourceGroupName, NamespaceInfo.Name, name, parameters);
+        return queue as QueueDescription;
     }
 
     public QueueDescription CreateQueue(QueueDescription queueDescription)

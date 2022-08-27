@@ -46,7 +46,7 @@ class Program
 
         if (namespaceManager.QueueExists(options.QueueName))
             namespaceManager.DeleteQueue(options.QueueName);
-        namespaceManager.CreateQueue(options.QueueName);
+        var queue = namespaceManager.CreateQueue(options.QueueName);
 
         var client = QueueClient.CreateFromConnectionString(ConnectionString, options.QueueName);
         var message = new BrokeredMessage(new TestModel("Test"));
@@ -75,11 +75,11 @@ class Program
 
         if (namespaceManager.TopicExists(options.TopicName))
             namespaceManager.DeleteTopic(options.TopicName);
-        namespaceManager.CreateTopic(options.TopicName);
+        var topic = namespaceManager.CreateTopic(options.TopicName);
 
         if (namespaceManager.SubscriptionExists(options.TopicName, options.SubscriptionName))
             namespaceManager.DeleteSubscription(options.TopicName, options.SubscriptionName);
-        namespaceManager.CreateSubscription(options.TopicName, options.SubscriptionName);
+        var subscription = namespaceManager.CreateSubscription(options.TopicName, options.SubscriptionName);
 
         var client = TopicClient.CreateFromConnectionString(ConnectionString, options.TopicName);
         var message = new BrokeredMessage(new TestModel("Test"));
