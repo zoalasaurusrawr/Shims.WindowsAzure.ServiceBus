@@ -1,17 +1,7 @@
 ﻿using Microsoft.Azure.Management.ServiceBus.Models;
 
 namespace Microsoft.ServiceBus;
-public class TopicDescription : EntityDescription
+public class TopicDescription : SBTopic
 {
-    public TopicDescription(string path)
-        : base(path)
-    {
-    }
-
-    public TopicDescription(string path, SBTopic? entity) : this(path)
-    {
-        Entity = entity;
-    }
-
-    public SBTopic? Entity { get; set; }
+    public string Path => base.Name;
 }

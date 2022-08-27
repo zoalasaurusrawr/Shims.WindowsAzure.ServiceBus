@@ -2,22 +2,17 @@
 
 namespace Microsoft.ServiceBus;
 
-public class SubscriptionDescription
+public class SubscriptionDescription : SBSubscription
 {
-    public SubscriptionDescription(string topicPath, string name)
-        : this(topicPath, name, null)
-    {
+    public SubscriptionDescription()
+        : this(string.Empty)
+    {    
     }
 
-    public SubscriptionDescription(string topicPath, string name, SBSubscription? entity)
+    public SubscriptionDescription(string topicPath)
     {
-        TopicPath = topicPath ?? throw new ArgumentNullException(nameof(topicPath));
-        Name = name ?? throw new ArgumentNullException(nameof(name));
-        Entity = entity;
+        TopicPath = topicPath;
     }
 
-    public string TopicPath { get; set; } = "";
-    public string Name { get; set; } = "";
-
-    public SBSubscription? Entity { get; set; }
+    public string TopicPath { get; set; }
 }

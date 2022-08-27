@@ -4,14 +4,16 @@
     <TargetFrameworks>net461;net472;net48;net5.0;net6.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	<LangVersion>preview</LangVersion>
-	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-	<AssemblyVersion>6.2.2</AssemblyVersion>
-	<Version>1.0.3</Version>
-	<PackageLicenseExpression>MIT</PackageLicenseExpression>
-	<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <LangVersion>preview</LangVersion>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <AssemblyVersion>6.2.2</AssemblyVersion>
+    <Version>1.0.3</Version>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <PackageProjectUrl>https://github.com/zoeysaurusrex/WindowsAzure.ServiceBus.Shims</PackageProjectUrl>
     <RootNamespace>Microsoft.ServiceBus</RootNamespace>
+    <Description>A way forward for WindowsAzure.ServiceBus users moving to modern .NET</Description>
+    <Title>WindowsAzure.ServiceBus Shims</Title>
   </PropertyGroup>
 
   <ItemGroup>

@@ -99,7 +99,7 @@ public class NamespaceManager
     public SubscriptionDescription GetSubscription(string topicPath, string subscriptionName)
     {
         var subscription = ServiceBusClient.Subscriptions.Get(ResourceIdentifier.ResourceGroupName, ResourceIdentifier.Name, topicPath, subscriptionName);
-        return new SubscriptionDescription(topicPath, subscriptionName, subscription);
+        return subscription as SubscriptionDescription;
     }
 
     public SubscriptionDescription GetSubscription(SubscriptionDescription description)
@@ -114,13 +114,13 @@ public class NamespaceManager
         if (subscriptions == null)
             return Enumerable.Empty<SubscriptionDescription>();
 
-        return subscriptions.Select(s => new SubscriptionDescription(topicPath, s.Name, s));
+        return subscriptions.Select(s => s as SubscriptionDescription);
     }
 
     public async Task<SubscriptionDescription> GetSubscriptionAsync(string topicPath, string subscriptionName)
     {
         var subscription = await ServiceBusClient.Subscriptions.GetAsync(ResourceIdentifier.ResourceGroupName, ResourceIdentifier.Name, topicPath, subscriptionName);
-        return new SubscriptionDescription(topicPath, subscriptionName, subscription);
+        return subscription as SubscriptionDescription;
     }
 
     public Task<SubscriptionDescription> GetSubscriptionAsync(SubscriptionDescription description)
@@ -135,20 +135,19 @@ public class NamespaceManager
         if (subscriptions == null)
             return Enumerable.Empty<SubscriptionDescription>();
 
-        return subscriptions.Select(s => new SubscriptionDescription(topicPath, s.Name, s));
+        return subscriptions.Select(s => s as SubscriptionDescription);
     }
 
     public SubscriptionDescription CreateSubscription(string topicPath, string subscriptionName)
     {
         var subscription = ServiceBusClient.Subscriptions.CreateOrUpdate(ResourceIdentifier.ResourceGroupName, ResourceIdentifier.Name, topicPath, subscriptionName, new SBSubscription());
-        return new SubscriptionDescription(topicPath, subscriptionName, subscription);
+        return subscription as SubscriptionDescription;
     }
 
     public SubscriptionDescription CreateSubscription(SubscriptionDescription description)
     {
         var subscription = ServiceBusClient.Subscriptions.CreateOrUpdate(ResourceIdentifier.ResourceGroupName, ResourceIdentifier.Name, description.TopicPath, description.Name, new SBSubscription());
-        description.Entity = subscription;
-        return description;
+        return subscription as SubscriptionDescription;
     }
 
     public void DeleteSubscription(string topicPath, string subscriptionName)
@@ -198,13 +197,15 @@ public class NamespaceManager
     public async Task<SubscriptionDescription> CreateSubscriptionAsync(string topicPath, string subscriptionName)
     {
         var subscription = await ServiceBusClient.Subscriptions.CreateOrUpdateAsync(ResourceIdentifier.ResourceGroupName, ResourceIdentifier.Name, topicPath, subscriptionName, new SBSubscription());
-        return new SubscriptionDescription(topicPath, subscriptionName, subscription);
+        return subscription as SubscriptionDescription;
     }
 
     public async Task<SubscriptionDescription> CreateSubscriptionAsync(SubscriptionDescription description)
     {
         var subscription = await ServiceBusClient.Subscriptions.CreateOrUpdateAsync(ResourceIdentifier.ResourceGroupName, ResourceIdentifier.Name, description.TopicPath, description.Name, new SBSubscription());
-        return new SubscriptionDescription(description.TopicPath, description.Name, subscription);
+        var result = subscription as SubscriptionDescription;
+        result.TopicPath = description.TopicPath;
+        return result;
     }
 
     public Task DeleteSubscriptionAsync(string topicPath, string subscriptionName)
@@ -273,7 +274,7 @@ public class NamespaceManager
     public TopicDescription GetTopic(string path)
     {
         var topic = ServiceBusClient.Topics.Get(ResourceIdentifier.ResourceGroupName, NamespaceInfo.Name, path);
-        return new TopicDescription(path, topic);
+        return (TopicDescription)topic;
     }
 
     public IEnumerable<TopicDescription> GetTopics()
@@ -285,7 +286,7 @@ public class NamespaceManager
 
         foreach (var topic in topics)
         {
-            yield return new TopicDescription(topic.Name, topic);
+            yield return topic as TopicDescription;
         }
     }
 
@@ -297,16 +298,15 @@ public class NamespaceManager
     public TopicDescription CreateTopic(string path)
     {
         var parameters = new SBTopic();
-        var sbTopic = ServiceBusClient.Topics.CreateOrUpdate(ResourceIdentifier.ResourceGroupName, NamespaceInfo.Name, path, parameters);
-        return new TopicDescription(path, sbTopic);
+        var topic = ServiceBusClient.Topics.CreateOrUpdate(ResourceIdentifier.ResourceGroupName, NamespaceInfo.Name, path, parameters);
+        return (TopicDescription)topic;
     }
 
     public TopicDescription CreateTopic(TopicDescription topicDescription)
     {
         var parameters = new SBTopic();
-        var sbTopic = ServiceBusClient.Topics.CreateOrUpdate(ResourceIdentifier.ResourceGroupName, NamespaceInfo.Name, topicDescription.Path, parameters);
-        topicDescription.Entity = sbTopic;
-        return topicDescription;
+        var topic = ServiceBusClient.Topics.CreateOrUpdate(ResourceIdentifier.ResourceGroupName, NamespaceInfo.Name, topicDescription.Path, parameters);
+        return (TopicDescription)topic;
     }
 
     public async ValueTask<bool> TopicExistsAsync(string path)
@@ -327,7 +327,7 @@ public class NamespaceManager
     public async Task<TopicDescription> GetTopicAsync(string path)
     {
         var topic = await ServiceBusClient.Topics.GetAsync(ResourceIdentifier.ResourceGroupName, NamespaceInfo.Name, path);
-        return new TopicDescription(path, topic);
+        return (TopicDescription)topic;
     }
 
     public async Task<IEnumerable<TopicDescription>> GetTopicsAsync()
@@ -337,7 +337,7 @@ public class NamespaceManager
         if (topics == null)
             return Enumerable.Empty<TopicDescription>();
 
-        return topics.Select(s => new TopicDescription(s.Name, s));
+        return topics.Select(s => s as TopicDescription);
     }
 
     public Task DeleteTopicAsync(string path)
@@ -351,16 +351,15 @@ public class NamespaceManager
     public async Task<TopicDescription> CreateTopicAsync(string path)
     {
         var parameters = new SBTopic();
-        var sbTopic = await ServiceBusClient.Topics.CreateOrUpdateAsync(ResourceIdentifier.ResourceGroupName, NamespaceInfo.Name, path, parameters);
-        return new TopicDescription(path, sbTopic);
+        var topic = await ServiceBusClient.Topics.CreateOrUpdateAsync(ResourceIdentifier.ResourceGroupName, NamespaceInfo.Name, path, parameters);
+        return (TopicDescription)topic;
     }
 
     public async Task<TopicDescription> CreateTopicAsync(TopicDescription topicDescription)
     {
         var parameters = new SBTopic();
-        var sbTopic = await ServiceBusClient.Topics.CreateOrUpdateAsync(ResourceIdentifier.ResourceGroupName, NamespaceInfo.Name, topicDescription.Path, parameters);
-        topicDescription.Entity = sbTopic;
-        return topicDescription;
+        var topic = await ServiceBusClient.Topics.CreateOrUpdateAsync(ResourceIdentifier.ResourceGroupName, NamespaceInfo.Name, topicDescription.Path, parameters);
+        return (TopicDescription)topic;
     }
 
 
@@ -368,15 +367,14 @@ public class NamespaceManager
     {
         var parameters = new SBQueue();
         var sbQueue = ServiceBusClient.Queues.CreateOrUpdate(ResourceIdentifier.ResourceGroupName, NamespaceInfo.Name, name, parameters);
-        return new QueueDescription(name, sbQueue);
+        return (QueueDescription)sbQueue;
     }
 
     public QueueDescription CreateQueue(QueueDescription queueDescription)
     {
         var parameters = new SBQueue();
         var sbQueue = ServiceBusClient.Queues.CreateOrUpdate(ResourceIdentifier.ResourceGroupName, NamespaceInfo.Name, queueDescription.Path, parameters);
-        queueDescription.Entity = sbQueue;
-        return queueDescription;
+        return (QueueDescription)sbQueue;
     }
 
     public bool QueueExists(string name)
@@ -403,7 +401,7 @@ public class NamespaceManager
     public QueueDescription GetQueue(string name)
     {
         var queue = ServiceBusClient.Queues.Get(ResourceIdentifier.ResourceGroupName, NamespaceInfo.Name, name);
-        return new QueueDescription(name, queue);
+        return (QueueDescription)queue;
     }
 
     public IEnumerable<QueueDescription> GetQueues()
@@ -415,16 +413,15 @@ public class NamespaceManager
 
         foreach (var queue in queues)
         {
-            yield return new QueueDescription(queue.Name, queue);
+            yield return queue as QueueDescription;
         }
     }
 
     public async Task<QueueDescription> CreateQueueAsync(QueueDescription queueDescription)
     {
         var parameters = new SBQueue();
-        var sbQueue = await ServiceBusClient.Queues.CreateOrUpdateAsync(ResourceIdentifier.ResourceGroupName, NamespaceInfo.Name, queueDescription.Path, parameters);
-        queueDescription.Entity = sbQueue;
-        return queueDescription;
+        var queue = await ServiceBusClient.Queues.CreateOrUpdateAsync(ResourceIdentifier.ResourceGroupName, NamespaceInfo.Name, queueDescription.Path, parameters);
+        return (QueueDescription)queue;
     }
 
     public async ValueTask<bool> QueueExistsAsync(string name)
@@ -453,7 +450,7 @@ public class NamespaceManager
     public async Task<QueueDescription> GetQueueAsync(string name)
     {
         var queue = await ServiceBusClient.Queues.GetAsync(ResourceIdentifier.ResourceGroupName, NamespaceInfo.Name, name);
-        return new QueueDescription(name, queue);
+        return (QueueDescription)queue;
     }
 
     public async Task<IEnumerable<QueueDescription>> GetQueuesAsync()
@@ -463,7 +460,7 @@ public class NamespaceManager
         if (queues == null)
             return Enumerable.Empty<QueueDescription>();
 
-        return queues.Select(s => new QueueDescription(s.Name, s));
+        return queues.Select(s => s as QueueDescription);
     }
 
     private NamespaceInfo GetNamespaceInfo(Uri uri)
