@@ -4,20 +4,20 @@ namespace Microsoft.ServiceBus;
 
 public class SubscriptionDescription
 {
-    public SubscriptionDescription(string topicPath, string subscriptionName)
-        : this(topicPath, subscriptionName, null)
+    public SubscriptionDescription(string topicPath, string name)
+        : this(topicPath, name, null)
     {
     }
 
-    public SubscriptionDescription(string topicPath, string subscriptionName, SBSubscription? entity)
+    public SubscriptionDescription(string topicPath, string name, SBSubscription? entity)
     {
         TopicPath = topicPath ?? throw new ArgumentNullException(nameof(topicPath));
-        SubscriptionName = subscriptionName ?? throw new ArgumentNullException(nameof(subscriptionName));
+        Name = name ?? throw new ArgumentNullException(nameof(name));
         Entity = entity;
     }
 
     public string TopicPath { get; set; } = "";
-    public string SubscriptionName { get; set; } = "";
+    public string Name { get; set; } = "";
 
     public SBSubscription? Entity { get; set; }
 }
