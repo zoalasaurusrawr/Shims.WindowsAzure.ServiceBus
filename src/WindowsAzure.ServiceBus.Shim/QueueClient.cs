@@ -68,6 +68,12 @@ public class QueueClient : ServiceBusClient, IDisposable, IMessageClient, IAckno
         AsyncHelpers.RunSync(() => RunAsync(callback, onMessageOptions));
     }
 
+    public MessageSession AcceptMessageSession(string sessionId)
+    {
+        var session = AcceptSessionAsync(_queueName, sessionId).GetAwaiter().GetResult();
+        return new MessageSession(session);
+    }
+
     private async Task RunAsync(Action<BrokeredMessage> callback, OnMessageOptions onMessageOptions)
     {
         _callback = callback;

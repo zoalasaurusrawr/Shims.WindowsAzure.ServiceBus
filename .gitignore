@@ -348,3 +348,6 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+samples/WindowsAzure.ServiceBus.Net.Runner/appsettings.Development.json
+tests/Unit.Tests/appsettings.Development.json
+samples/WindowsAzure.ServiceBus.NetFx.Runner/appsettings.Development.json

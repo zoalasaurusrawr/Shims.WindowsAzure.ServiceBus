@@ -68,6 +68,12 @@ public class SubscriptionClient : ServiceBusClient, IAcknowledgeMessageClient
         AsyncHelpers.RunSync(() => RunAsync(callback, onMessageOptions));
     }
 
+    public MessageSession AcceptMessageSession(string sessionId)
+    {
+        var session = AcceptSessionAsync(_topicPath, _subscriptionName, sessionId).GetAwaiter().GetResult();
+        return new MessageSession(session);
+    }
+
     public void Close()
     {
         _messagePump?.StopAsync(_defaultToken).Wait();
