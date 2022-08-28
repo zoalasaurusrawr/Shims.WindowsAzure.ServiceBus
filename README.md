@@ -57,6 +57,10 @@ WindowsAzure.ServiceBus >= 6.X
 - NamespaceManager
   - Credentials through DefaultAzureCredential
   - CRUD operations for Topics, Subscriptions, and Queues (Sync and Async)
+  - Entity Description
+  
+- MessagingFactory
+  - Creation of Topic, Queue, and Subscription Clients
 
 ***
 
