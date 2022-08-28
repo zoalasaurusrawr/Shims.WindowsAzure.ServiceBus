@@ -41,7 +41,8 @@ public class SubscriptionClient : ServiceBusClient, IAcknowledgeMessageClient
     public string Name => base.Identifier;
     public Func<BrokeredMessage> Receive => new Func<BrokeredMessage>(OnReceive);
     public ServiceBusReceiverOptions ReceiverOptions { get; }
-    private ShimMessagePump? _messagePump;
+    private IMessagePump? _messagePump;
+    private CancellationToken _defaultToken = new CancellationToken();
 
     public static SubscriptionClient CreateFromConnectionString(string connectionString, string topicPath, string name)
     {
@@ -69,14 +70,14 @@ public class SubscriptionClient : ServiceBusClient, IAcknowledgeMessageClient
 
     public void Close()
     {
-        _messagePump?.Stop();
+        _messagePump?.StopAsync(_defaultToken).Wait();
     }
 
     private void Run(Action<BrokeredMessage> callback, OnMessageOptions onMessageOptions)
     {
         _callback = callback;
         _messagePump = new ShimMessagePump(Receiver, InternalCallback, onMessageOptions);
-        _messagePump.Run();
+        _messagePump.StartAsync(_defaultToken).Wait();
     }
 
     private void InternalCallback(BrokeredMessage message)

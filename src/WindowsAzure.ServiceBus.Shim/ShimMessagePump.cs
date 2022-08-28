@@ -2,7 +2,7 @@
 
 namespace Microsoft.ServiceBus.Messaging;
 
-internal class ShimMessagePump : IDisposable
+internal class ShimMessagePump : IMessagePump, IDisposable
 {
     public ShimMessagePump(ServiceBusReceiver receiver, Action<BrokeredMessage> callback, OnMessageOptions onMessageOptions)
     {
@@ -29,15 +29,36 @@ internal class ShimMessagePump : IDisposable
 
     private void OnMessageReceived(object? state)
     {
-        var task = Receiver.ReceiveMessageAsync(OnMessageOptions.ReceiveTimeOut);
-        Task.WaitAny(task);
-        var message = BrokeredMessage.Create(task.Result);
-        Callback(message);
+        var message = Receiver.ReceiveMessageAsync(OnMessageOptions.ReceiveTimeOut).GetAwaiter().GetResult();
+        var result = BrokeredMessage.Create(message);
+        Callback(result);
     }
 
     public void Dispose()
     {
         _pump?.Change(Timeout.Infinite, Timeout.Infinite);
         _pump?.Dispose();
+    }
+
+    public async Task StartAsync(CancellationToken cancellationToken)
+    {
+        await ExecuteAsync(cancellationToken);
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        cancellationToken = new CancellationToken(true);
+        return Task.CompletedTask;
+    }
+
+    public async Task ExecuteAsync(CancellationToken cancellationToken)
+    {
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            var message = await Receiver.ReceiveMessageAsync(OnMessageOptions.ReceiveTimeOut);
+            var result = BrokeredMessage.Create(message);
+            Callback(result);
+            await Task.Delay(TimeSpan.FromMilliseconds(100));
+        }
     }
 }
