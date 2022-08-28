@@ -14,5 +14,11 @@ public class SubscriptionDescription : SBSubscription
         TopicPath = topicPath;
     }
 
+    public SubscriptionDescription(string topicPath, SBSubscription subscription)
+    {
+        TopicPath = topicPath;
+        this.CopyFrom(subscription);
+    }
+
     public string TopicPath { get; set; }
 }
