@@ -31,15 +31,16 @@ public class SubscriptionClient : ServiceBusClient, IAcknowledgeMessageClient
         get
         {
             if (_receiver == null)
+            {
                 _receiver = base.CreateReceiver(_topicPath, _subscriptionName, ReceiverOptions);
-
+            }
             return _receiver;
         }
     }
 
     public string Name => base.Identifier;
+    public Func<BrokeredMessage> Receive => new Func<BrokeredMessage>(OnReceive);
     public ServiceBusReceiverOptions ReceiverOptions { get; }
-
     private ShimMessagePump? _messagePump;
 
     public static SubscriptionClient CreateFromConnectionString(string connectionString, string topicPath, string name)
@@ -83,6 +84,12 @@ public class SubscriptionClient : ServiceBusClient, IAcknowledgeMessageClient
         message.AcknowledgeMessageClient = this;
 
         _callback?.Invoke(message);
+    }
+
+    private BrokeredMessage OnReceive()
+    {
+        var result = Receiver.ReceiveMessageAsync().GetAwaiter().GetResult();
+        return new BrokeredMessage(result);
     }
 
     public void CompleteMessage(BrokeredMessage brokeredMessage)
