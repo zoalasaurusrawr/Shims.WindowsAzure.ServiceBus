@@ -114,7 +114,7 @@ public class NamespaceManager
         if (subscriptions == null)
             return Enumerable.Empty<SubscriptionDescription>();
 
-        return subscriptions.Select(s => s as SubscriptionDescription);
+        return subscriptions.Select(s => new SubscriptionDescription(topicPath, s));
     }
 
     public async Task<SubscriptionDescription> GetSubscriptionAsync(string topicPath, string subscriptionName)
@@ -135,7 +135,7 @@ public class NamespaceManager
         if (subscriptions == null)
             return Enumerable.Empty<SubscriptionDescription>();
 
-        return subscriptions.Select(s => s as SubscriptionDescription);
+        return subscriptions.Select(s => new SubscriptionDescription(topicPath, s));
     }
 
     public SubscriptionDescription CreateSubscription(string topicPath, string subscriptionName)
