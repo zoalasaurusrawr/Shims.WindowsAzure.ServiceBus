@@ -29,9 +29,11 @@ internal class ShimMessagePump : IMessagePump, IDisposable
 
     private void OnMessageReceived(object? state)
     {
-        var message = Receiver.ReceiveMessageAsync(OnMessageOptions.ReceiveTimeOut).GetAwaiter().GetResult();
-        var result = BrokeredMessage.Create(message);
-        Callback(result);
+        //var message = Receiver.ReceiveMessageAsync(OnMessageOptions.ReceiveTimeOut).GetAwaiter().GetResult();
+        //var result = BrokeredMessage.Create(message);
+        //Callback(result);
+        var task = ExecuteAsync(CancellationToken.None);
+        Task.WaitAll(task);
     }
 
     public void Dispose()
@@ -40,25 +42,28 @@ internal class ShimMessagePump : IMessagePump, IDisposable
         _pump?.Dispose();
     }
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    public Task StartAsync(CancellationToken cancellationToken)
     {
-        await ExecuteAsync(cancellationToken);
+        _pump = new Timer(new TimerCallback(OnMessageReceived));
+        _pump.Change(TimeSpan.FromSeconds(1), TimeSpan.FromMilliseconds(100));
+        return Task.CompletedTask;
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
+        _pump?.Change(Timeout.Infinite, Timeout.Infinite);
         cancellationToken = new CancellationToken(true);
         return Task.CompletedTask;
     }
 
     public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        while (!cancellationToken.IsCancellationRequested)
+        var message = await Receiver.ReceiveMessageAsync(OnMessageOptions.ReceiveTimeOut);
+
+        if (message != null)
         {
-            var message = await Receiver.ReceiveMessageAsync(OnMessageOptions.ReceiveTimeOut);
             var result = BrokeredMessage.Create(message);
             Callback(result);
-            await Task.Delay(TimeSpan.FromMilliseconds(100));
         }
     }
 }

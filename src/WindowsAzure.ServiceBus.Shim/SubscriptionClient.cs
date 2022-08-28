@@ -55,7 +55,7 @@ public class SubscriptionClient : ServiceBusClient, IAcknowledgeMessageClient
         if (callback == null)
             throw new ArgumentNullException(nameof(callback));
 
-        Run(callback, new OnMessageOptions());
+        AsyncHelpers.RunSync(() => RunAsync(callback, new OnMessageOptions()));
     }
 
     public void OnMessage(Action<BrokeredMessage> callback, OnMessageOptions onMessageOptions)
@@ -65,7 +65,7 @@ public class SubscriptionClient : ServiceBusClient, IAcknowledgeMessageClient
 
         onMessageOptions ??= new OnMessageOptions();
         onMessageOptions.MessageClientEntity = this;
-        Run(callback, onMessageOptions);
+        AsyncHelpers.RunSync(() => RunAsync(callback, onMessageOptions));
     }
 
     public void Close()
@@ -73,11 +73,11 @@ public class SubscriptionClient : ServiceBusClient, IAcknowledgeMessageClient
         _messagePump?.StopAsync(_defaultToken).Wait();
     }
 
-    private void Run(Action<BrokeredMessage> callback, OnMessageOptions onMessageOptions)
+    private async Task RunAsync(Action<BrokeredMessage> callback, OnMessageOptions onMessageOptions)
     {
         _callback = callback;
         _messagePump = new ShimMessagePump(Receiver, InternalCallback, onMessageOptions);
-        _messagePump.StartAsync(_defaultToken).Wait();
+        await _messagePump.StartAsync(_defaultToken);
     }
 
     private void InternalCallback(BrokeredMessage message)
