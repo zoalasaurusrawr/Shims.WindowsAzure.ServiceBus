@@ -11,9 +11,11 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <PackageProjectUrl>https://github.com/zoeysaurusrex/WindowsAzure.ServiceBus.Shims</PackageProjectUrl>
+    <PackageTags>ServiceBus Microsoft Azure AppFabric Messaging PubSub Publish Subscribe Queue Topic Relay Service Bus AMQP OASIS EventHub Event;</PackageTags>
     <RootNamespace>Microsoft.ServiceBus</RootNamespace>
-    <Description>A way forward for WindowsAzure.ServiceBus users moving to modern .NET</Description>
-    <Title>WindowsAzure.ServiceBus Shims</Title>
+    <Description>A path forward for WindowsAzure.ServiceBus users moving to modern .NET</Description>
+    <Title>Microsoft Azure Service Bus Shims</Title>
+    <summary>A path forward for WindowsAzure.ServiceBus users moving to modern .NET</summary>
   </PropertyGroup>
 
   <ItemGroup>

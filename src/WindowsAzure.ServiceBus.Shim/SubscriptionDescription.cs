@@ -15,9 +15,15 @@ public class SubscriptionDescription : SBSubscription
     }
 
     public SubscriptionDescription(string topicPath, SBSubscription subscription)
+        : base(subscription.Id, subscription.Name, subscription.Type, subscription.Location, subscription.MessageCount, 
+            subscription.CreatedAt, subscription.AccessedAt, subscription.UpdatedAt, subscription.CountDetails, 
+            subscription.LockDuration, subscription.RequiresSession, subscription.DefaultMessageTimeToLive, 
+            subscription.DeadLetteringOnFilterEvaluationExceptions, subscription.DeadLetteringOnMessageExpiration, 
+            subscription.DuplicateDetectionHistoryTimeWindow, subscription.MaxDeliveryCount, subscription.Status, 
+            subscription.EnableBatchedOperations, subscription.AutoDeleteOnIdle, subscription.ForwardTo, 
+            subscription.ForwardDeadLetteredMessagesTo, subscription.IsClientAffine, subscription.ClientAffineProperties, subscription.SystemData)
     {
         TopicPath = topicPath;
-        this.CopyFrom(subscription);
     }
 
     public string TopicPath { get; set; }

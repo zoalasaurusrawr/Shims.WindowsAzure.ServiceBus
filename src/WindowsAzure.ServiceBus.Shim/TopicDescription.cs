@@ -8,8 +8,12 @@ public class TopicDescription : SBTopic
     }
 
     public TopicDescription(SBTopic topic)
+        : base(topic.Id, topic.Name, topic.Type, topic.Location, topic.SizeInBytes, topic.CreatedAt, 
+            topic.UpdatedAt, topic.AccessedAt, topic.SubscriptionCount, topic.CountDetails, 
+            topic.DefaultMessageTimeToLive, topic.MaxSizeInMegabytes, topic.MaxMessageSizeInKilobytes, 
+            topic.RequiresDuplicateDetection, topic.DuplicateDetectionHistoryTimeWindow, topic.EnableBatchedOperations, 
+            topic.Status, topic.SupportOrdering, topic.AutoDeleteOnIdle, topic.EnablePartitioning, topic.EnableExpress, topic.SystemData)
     {
-        this.CopyFrom(topic);
     }
 
     public string Path => base.Name;
