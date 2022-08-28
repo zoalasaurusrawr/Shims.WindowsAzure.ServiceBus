@@ -5,10 +5,21 @@ namespace Microsoft.ServiceBus.Messaging;
 public class SubscriptionClient : ServiceBusClient, IAcknowledgeMessageClient
 {
     public SubscriptionClient(string connectionString, string topicPath, string subscriptionName)
+        : this(connectionString, topicPath, subscriptionName, ServiceBusReceiveMode.PeekLock)
+    {
+    }
+
+    public SubscriptionClient(string connectionString, string topicPath, string subscriptionName, ServiceBusReceiveMode receiveMode)
+        : this(connectionString, topicPath, subscriptionName, new ServiceBusReceiverOptions { ReceiveMode = ServiceBusReceiveMode.PeekLock })
+    {
+    }
+
+    public SubscriptionClient(string connectionString, string topicPath, string subscriptionName, ServiceBusReceiverOptions receiverOptions)
         : base(connectionString)
     {
         _topicPath = topicPath ?? throw new ArgumentNullException(nameof(topicPath));
         _subscriptionName = subscriptionName ?? throw new ArgumentNullException(nameof(subscriptionName));
+        ReceiverOptions = receiverOptions;
     }
 
     private readonly string _topicPath;
@@ -20,11 +31,14 @@ public class SubscriptionClient : ServiceBusClient, IAcknowledgeMessageClient
         get
         {
             if (_receiver == null)
-                _receiver = base.CreateReceiver(_topicPath, _subscriptionName);
+                _receiver = base.CreateReceiver(_topicPath, _subscriptionName, ReceiverOptions);
 
             return _receiver;
         }
     }
+
+    public string Name => base.Identifier;
+    public ServiceBusReceiverOptions ReceiverOptions { get; }
 
     private ShimMessagePump? _messagePump;
 
@@ -50,6 +64,11 @@ public class SubscriptionClient : ServiceBusClient, IAcknowledgeMessageClient
         onMessageOptions ??= new OnMessageOptions();
         onMessageOptions.MessageClientEntity = this;
         Run(callback, onMessageOptions);
+    }
+
+    public void Close()
+    {
+        _messagePump?.Stop();
     }
 
     private void Run(Action<BrokeredMessage> callback, OnMessageOptions onMessageOptions)

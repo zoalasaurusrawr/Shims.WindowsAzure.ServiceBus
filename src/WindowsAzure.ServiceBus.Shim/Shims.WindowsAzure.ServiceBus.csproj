@@ -16,6 +16,10 @@
     <Description>A path forward for WindowsAzure.ServiceBus users moving to modern .NET</Description>
     <Title>Microsoft Azure Service Bus Shims</Title>
     <summary>A path forward for WindowsAzure.ServiceBus users moving to modern .NET</summary>
+    <RepositoryUrl>https://github.com/zoeysaurusrex/WindowsAzure.ServiceBus.Shims</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReleaseNotes>- Added support for MessagingFactory</PackageReleaseNotes>
+    <IncludeSymbols>True</IncludeSymbols>
   </PropertyGroup>
 
   <ItemGroup>

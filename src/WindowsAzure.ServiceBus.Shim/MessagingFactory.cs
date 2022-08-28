@@ -1,4 +1,6 @@
-﻿namespace Microsoft.ServiceBus.Messaging;
+﻿using Azure.Messaging.ServiceBus;
+
+namespace Microsoft.ServiceBus.Messaging;
 
 public class MessagingFactory
 {
@@ -25,6 +27,12 @@ public class MessagingFactory
     {
         var connectionString = NamespaceManager.GetTopicConnectionString(topicPath);
         return new SubscriptionClient(connectionString, topicPath, name);
+    }
+
+    public SubscriptionClient CreateSubscriptionClient(string topicPath, string name, ServiceBusReceiveMode receiveMode)
+    {
+        var connectionString = NamespaceManager.GetTopicConnectionString(topicPath);
+        return new SubscriptionClient(connectionString, topicPath, name, receiveMode);
     }
 
     public static MessagingFactory Create(Uri uri, TokenProvider tokenProvider)
