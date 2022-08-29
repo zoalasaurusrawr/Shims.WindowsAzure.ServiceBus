@@ -29,7 +29,7 @@ public class MessagingFactory
         return new SubscriptionClient(connectionString, topicPath, name);
     }
 
-    public SubscriptionClient CreateSubscriptionClient(string topicPath, string name, ServiceBusReceiveMode receiveMode)
+    public SubscriptionClient CreateSubscriptionClient(string topicPath, string name, ReceiveMode receiveMode)
     {
         var connectionString = NamespaceManager.GetTopicConnectionString(topicPath);
         return new SubscriptionClient(connectionString, topicPath, name, receiveMode);

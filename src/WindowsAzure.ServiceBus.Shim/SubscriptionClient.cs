@@ -5,12 +5,12 @@ namespace Microsoft.ServiceBus.Messaging;
 public class SubscriptionClient : ServiceBusClient, IAcknowledgeMessageClient
 {
     public SubscriptionClient(string connectionString, string topicPath, string subscriptionName)
-        : this(connectionString, topicPath, subscriptionName, ServiceBusReceiveMode.PeekLock)
+        : this(connectionString, topicPath, subscriptionName, ReceiveMode.PeekLock)
     {
     }
 
-    public SubscriptionClient(string connectionString, string topicPath, string subscriptionName, ServiceBusReceiveMode receiveMode)
-        : this(connectionString, topicPath, subscriptionName, new ServiceBusReceiverOptions { ReceiveMode = ServiceBusReceiveMode.PeekLock })
+    public SubscriptionClient(string connectionString, string topicPath, string subscriptionName, ReceiveMode receiveMode)
+        : this(connectionString, topicPath, subscriptionName, new ServiceBusReceiverOptions { ReceiveMode = (ServiceBusReceiveMode)(receiveMode) })
     {
     }
 

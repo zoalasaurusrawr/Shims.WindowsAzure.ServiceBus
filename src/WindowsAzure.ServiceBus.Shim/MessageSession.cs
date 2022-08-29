@@ -1,7 +1,7 @@
 ﻿using Azure.Messaging.ServiceBus;
 using Microsoft.ServiceBus.Messaging;
 
-namespace Microsoft.ServiceBus;
+namespace Microsoft.ServiceBus.Messaging;
 public class MessageSession
 {
 	public MessageSession(ServiceBusSessionReceiver receiver)
