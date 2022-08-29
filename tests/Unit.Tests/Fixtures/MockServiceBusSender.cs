@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
@@ -7,16 +8,18 @@ using Azure.Messaging.ServiceBus;
 namespace Unit.Tests.Fixtures;
 public class MockServiceBusSender : ServiceBusSender
 {
-    public MockServiceBusSender()
+    private readonly string _queueOrTopicName;
+
+    public MockServiceBusSender(ServiceBusClient client, string queueOrTopicName) 
+        : base(client, queueOrTopicName)
     {
+        this._queueOrTopicName = queueOrTopicName;
     }
 
-    public MockServiceBusSender(ServiceBusClient client, string queueOrTopicName) : base(client, queueOrTopicName)
+    public MockServiceBusSender(ServiceBusClient client, string queueOrTopicName, ServiceBusSenderOptions options) 
+        : base(client, queueOrTopicName, options)
     {
-    }
-
-    public MockServiceBusSender(ServiceBusClient client, string queueOrTopicName, ServiceBusSenderOptions options) : base(client, queueOrTopicName, options)
-    {
+        this._queueOrTopicName = queueOrTopicName;
     }
 
     public override string FullyQualifiedNamespace => base.FullyQualifiedNamespace;
@@ -69,27 +72,40 @@ public class MockServiceBusSender : ServiceBusSender
 
     public override Task<long> ScheduleMessageAsync(ServiceBusMessage message, DateTimeOffset scheduledEnqueueTime, CancellationToken cancellationToken = default)
     {
-        return base.ScheduleMessageAsync(message, scheduledEnqueueTime, cancellationToken);
+        AzureMocksFixture.MockSend(_queueOrTopicName, message);
+
+        return Task.FromResult((long)message.GetHashCode());
     }
 
     public override Task<IReadOnlyList<long>> ScheduleMessagesAsync(IEnumerable<ServiceBusMessage> messages, DateTimeOffset scheduledEnqueueTime, CancellationToken cancellationToken = default)
     {
-        return base.ScheduleMessagesAsync(messages, scheduledEnqueueTime, cancellationToken);
+        foreach (var message in messages)
+        {
+            AzureMocksFixture.MockSend(_queueOrTopicName, message);
+        }
+
+        IReadOnlyList<long> ids = messages.Select(s => (long)s.GetHashCode()).ToList();
+        return Task.FromResult(ids);
     }
 
     public override Task SendMessageAsync(ServiceBusMessage message, CancellationToken cancellationToken = default)
     {
-        return base.SendMessageAsync(message, cancellationToken);
+        AzureMocksFixture.MockSend(_queueOrTopicName, message);
+        return Task.CompletedTask;
     }
 
     public override Task SendMessagesAsync(IEnumerable<ServiceBusMessage> messages, CancellationToken cancellationToken = default)
     {
-        return base.SendMessagesAsync(messages, cancellationToken);
+        foreach (var message in messages)
+        {
+            AzureMocksFixture.MockSend(_queueOrTopicName, message);
+        }
+        return Task.CompletedTask;
     }
 
     public override Task SendMessagesAsync(ServiceBusMessageBatch messageBatch, CancellationToken cancellationToken = default)
     {
-        return base.SendMessagesAsync(messageBatch, cancellationToken);
+        return Task.CompletedTask;
     }
 
     public override string ToString()

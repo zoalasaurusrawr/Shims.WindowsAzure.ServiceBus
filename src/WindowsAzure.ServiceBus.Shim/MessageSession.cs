@@ -20,8 +20,9 @@ public class MessageSession
 	public ServiceBusReceiveMode ReceiveMode => _receiver.ReceiveMode;
 	public string SessionId => _receiver.SessionId;
 	public DateTimeOffset SessionLockedUntil => _receiver.SessionLockedUntil;
+    public Func<BrokeredMessage> Receive => new Func<BrokeredMessage>(OnReceive);
 
-	public BrokeredMessage ReceiveMessage(TimeSpan? maxWaitTime)
+    public BrokeredMessage ReceiveMessage(TimeSpan? maxWaitTime)
 	{
 		var message = _receiver.ReceiveMessageAsync(maxWaitTime).GetAwaiter().GetResult();
 		return new BrokeredMessage(message);
@@ -67,5 +68,11 @@ public class MessageSession
     public void RenewSessionLock()
     {
         _receiver.RenewSessionLockAsync().GetAwaiter().GetResult();
+    }
+
+    private BrokeredMessage OnReceive()
+    {
+        var result = Receiver.ReceiveMessageAsync().GetAwaiter().GetResult();
+        return new BrokeredMessage(result);
     }
 }

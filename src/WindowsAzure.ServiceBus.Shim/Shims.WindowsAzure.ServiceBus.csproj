@@ -7,7 +7,7 @@
     <LangVersion>preview</LangVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <AssemblyVersion>6.2.2</AssemblyVersion>
-    <Version>1.0.3</Version>
+    <Version>1.0.4.1</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <PackageProjectUrl>https://github.com/zoeysaurusrex/WindowsAzure.ServiceBus.Shims</PackageProjectUrl>
@@ -18,8 +18,10 @@
     <summary>A path forward for WindowsAzure.ServiceBus users moving to modern .NET</summary>
     <RepositoryUrl>https://github.com/zoeysaurusrex/WindowsAzure.ServiceBus.Shims</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>- Added support for MessagingFactory</PackageReleaseNotes>
+    <PackageReleaseNotes>- Added support for MessageSession</PackageReleaseNotes>
     <IncludeSymbols>True</IncludeSymbols>
+    <Company></Company>
+    <Authors>zoeysaurusrawr</Authors>
   </PropertyGroup>
 
   <ItemGroup>

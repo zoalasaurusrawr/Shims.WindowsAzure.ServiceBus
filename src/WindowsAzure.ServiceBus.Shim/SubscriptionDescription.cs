@@ -5,11 +5,12 @@ namespace Microsoft.ServiceBus;
 public class SubscriptionDescription : SBSubscription
 {
     public SubscriptionDescription()
-        : this(string.Empty)
+        : this(string.Empty, string.Empty)
     {    
     }
 
-    public SubscriptionDescription(string topicPath)
+    public SubscriptionDescription(string topicPath, string subscriptionName)
+        : base(name: subscriptionName)
     {
         TopicPath = topicPath;
     }

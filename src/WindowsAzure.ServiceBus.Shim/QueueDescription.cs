@@ -7,6 +7,11 @@ public class QueueDescription : SBQueue
     {
     }
 
+    public QueueDescription(string path)
+        : base(name: path)
+    {
+    }
+
     public QueueDescription(SBQueue queue)
         : base(queue.Id, queue.Name, queue.Type, queue.Location, queue.CountDetails, queue.CreatedAt, 
             queue.UpdatedAt, queue.AccessedAt, queue.SizeInBytes, queue.MessageCount, queue.LockDuration, 

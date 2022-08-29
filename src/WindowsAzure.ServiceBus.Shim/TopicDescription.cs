@@ -7,6 +7,11 @@ public class TopicDescription : SBTopic
     {
     }
 
+    public TopicDescription(string path)
+        : base(name: path)
+    {
+    }
+
     public TopicDescription(SBTopic topic)
         : base(topic.Id, topic.Name, topic.Type, topic.Location, topic.SizeInBytes, topic.CreatedAt, 
             topic.UpdatedAt, topic.AccessedAt, topic.SubscriptionCount, topic.CountDetails, 
