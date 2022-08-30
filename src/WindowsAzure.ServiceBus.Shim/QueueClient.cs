@@ -36,7 +36,8 @@ public class QueueClient : ServiceBusClient, IDisposable, IMessageClient, IAckno
         }
     }
 
-    private ShimMessagePump? _messagePump;
+    private IMessagePump? _messagePump;
+    private CancellationToken _defaultToken = new CancellationToken();
 
     public static QueueClient CreateFromConnectionString(string connectionString, string queueName)
     {
@@ -54,7 +55,7 @@ public class QueueClient : ServiceBusClient, IDisposable, IMessageClient, IAckno
         if (callback == null)
             throw new ArgumentNullException(nameof(callback));
 
-        Run(callback, new OnMessageOptions());
+        AsyncHelpers.RunSync(() => RunAsync(callback, new OnMessageOptions()));
     }
 
     public void OnMessage(Action<BrokeredMessage> callback, OnMessageOptions onMessageOptions)
@@ -64,14 +65,20 @@ public class QueueClient : ServiceBusClient, IDisposable, IMessageClient, IAckno
 
         onMessageOptions ??= new OnMessageOptions();
         onMessageOptions.MessageClientEntity = this;
-        Run(callback, onMessageOptions);
+        AsyncHelpers.RunSync(() => RunAsync(callback, onMessageOptions));
     }
 
-    private void Run(Action<BrokeredMessage> callback, OnMessageOptions onMessageOptions)
+    public MessageSession AcceptMessageSession(string sessionId)
+    {
+        var session = AcceptSessionAsync(_queueName, sessionId).GetAwaiter().GetResult();
+        return new MessageSession(session);
+    }
+
+    private async Task RunAsync(Action<BrokeredMessage> callback, OnMessageOptions onMessageOptions)
     {
         _callback = callback;
         _messagePump = new ShimMessagePump(Receiver, InternalCallback, onMessageOptions);
-        _messagePump.Run();
+        await _messagePump.StartAsync(_defaultToken);
     }
 
     private void InternalCallback(BrokeredMessage message)
@@ -79,6 +86,11 @@ public class QueueClient : ServiceBusClient, IDisposable, IMessageClient, IAckno
         message.AcknowledgeMessageClient = this;
 
         _callback?.Invoke(message);
+    }
+
+    public void Close()
+    {
+        _messagePump?.StopAsync(_defaultToken).Wait();
     }
 
     public void CompleteMessage(BrokeredMessage brokeredMessage)
@@ -107,7 +119,7 @@ public class QueueClient : ServiceBusClient, IDisposable, IMessageClient, IAckno
     {
         if (disposing)
         {
-            _messagePump?.Stop();
+            Close();
         }
     }
 }

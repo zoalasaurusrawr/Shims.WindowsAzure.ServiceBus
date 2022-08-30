@@ -21,6 +21,11 @@ namespace Microsoft.ServiceBus
 
         private static Uri CreateServiceUri(string scheme, string serviceNamespace, string servicePath, bool suppressRelayPathPrefix, string hostName)
         {
+            if (string.IsNullOrWhiteSpace(scheme))
+                throw new ArgumentException(nameof(scheme));
+            if (string.IsNullOrWhiteSpace(serviceNamespace))
+                throw new ArgumentException(nameof(serviceNamespace));
+
             string serviceNamespace2 = serviceNamespace.Trim();
             ValidateSchemeAndNamespace(scheme, serviceNamespace2);
             if (!servicePath.EndsWith("/", StringComparison.Ordinal))

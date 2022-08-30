@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.ServiceBus;
 using Microsoft.ServiceBus.Messaging;
 using WindowsAzure.ServiceBus.NetFx.Runner;
@@ -121,5 +120,17 @@ class Program
                 msg.Abandon();
             }
         }, onMessageOptions);
+    }
+
+    private static async Task StartServiceHubClient()
+    {
+        string EventHubConnectionString = Configuration.GetConnectionString("AzureEventHubs");
+        Console.WriteLine("Connecting to the Event Hub...");
+        var eventHubClient = EventHubClient.CreateFromConnectionString(EventHubConnectionString);
+        var runtimeInformation = await eventHubClient.GetRuntimeInformationAsync();
+        EventHubConsumerGroup group = eventHubClient.GetDefaultConsumerGroup();
+        var x = eventHubClient.GetRuntimeInformation().PartitionIds[0];
+        var eventHubDirectReceiver = group.CreateReceiver(eventHubClient.GetRuntimeInformation().PartitionIds[0]);
+        await eventHubClient.CloseAsync();
     }
 }

@@ -1,17 +1,25 @@
 ﻿using Microsoft.Azure.Management.ServiceBus.Models;
 
 namespace Microsoft.ServiceBus;
-public class TopicDescription : EntityDescription
+public class TopicDescription : SBTopic
 {
+    public TopicDescription()
+    {
+    }
+
     public TopicDescription(string path)
-        : base(path)
+        : base(name: path)
     {
     }
 
-    public TopicDescription(string path, SBTopic? entity) : this(path)
+    public TopicDescription(SBTopic topic)
+        : base(topic.Id, topic.Name, topic.Type, topic.Location, topic.SizeInBytes, topic.CreatedAt, 
+            topic.UpdatedAt, topic.AccessedAt, topic.SubscriptionCount, topic.CountDetails, 
+            topic.DefaultMessageTimeToLive, topic.MaxSizeInMegabytes, topic.MaxMessageSizeInKilobytes, 
+            topic.RequiresDuplicateDetection, topic.DuplicateDetectionHistoryTimeWindow, topic.EnableBatchedOperations, 
+            topic.Status, topic.SupportOrdering, topic.AutoDeleteOnIdle, topic.EnablePartitioning, topic.EnableExpress, topic.SystemData)
     {
-        Entity = entity;
     }
 
-    public SBTopic? Entity { get; set; }
+    public string Path => base.Name;
 }

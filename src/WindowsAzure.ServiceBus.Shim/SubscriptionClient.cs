@@ -5,10 +5,21 @@ namespace Microsoft.ServiceBus.Messaging;
 public class SubscriptionClient : ServiceBusClient, IAcknowledgeMessageClient
 {
     public SubscriptionClient(string connectionString, string topicPath, string subscriptionName)
+        : this(connectionString, topicPath, subscriptionName, ReceiveMode.PeekLock)
+    {
+    }
+
+    public SubscriptionClient(string connectionString, string topicPath, string subscriptionName, ReceiveMode receiveMode)
+        : this(connectionString, topicPath, subscriptionName, new ServiceBusReceiverOptions { ReceiveMode = (ServiceBusReceiveMode)(receiveMode) })
+    {
+    }
+
+    public SubscriptionClient(string connectionString, string topicPath, string subscriptionName, ServiceBusReceiverOptions receiverOptions)
         : base(connectionString)
     {
         _topicPath = topicPath ?? throw new ArgumentNullException(nameof(topicPath));
         _subscriptionName = subscriptionName ?? throw new ArgumentNullException(nameof(subscriptionName));
+        ReceiverOptions = receiverOptions;
     }
 
     private readonly string _topicPath;
@@ -20,13 +31,18 @@ public class SubscriptionClient : ServiceBusClient, IAcknowledgeMessageClient
         get
         {
             if (_receiver == null)
-                _receiver = base.CreateReceiver(_topicPath, _subscriptionName);
-
+            {
+                _receiver = base.CreateReceiver(_topicPath, _subscriptionName, ReceiverOptions);
+            }
             return _receiver;
         }
     }
 
-    private ShimMessagePump? _messagePump;
+    public string Name => base.Identifier;
+    public Func<BrokeredMessage> Receive => new Func<BrokeredMessage>(OnReceive);
+    public ServiceBusReceiverOptions ReceiverOptions { get; }
+    private IMessagePump? _messagePump;
+    private CancellationToken _defaultToken = new CancellationToken();
 
     public static SubscriptionClient CreateFromConnectionString(string connectionString, string topicPath, string name)
     {
@@ -39,7 +55,7 @@ public class SubscriptionClient : ServiceBusClient, IAcknowledgeMessageClient
         if (callback == null)
             throw new ArgumentNullException(nameof(callback));
 
-        Run(callback, new OnMessageOptions());
+        AsyncHelpers.RunSync(() => RunAsync(callback, new OnMessageOptions()));
     }
 
     public void OnMessage(Action<BrokeredMessage> callback, OnMessageOptions onMessageOptions)
@@ -49,14 +65,25 @@ public class SubscriptionClient : ServiceBusClient, IAcknowledgeMessageClient
 
         onMessageOptions ??= new OnMessageOptions();
         onMessageOptions.MessageClientEntity = this;
-        Run(callback, onMessageOptions);
+        AsyncHelpers.RunSync(() => RunAsync(callback, onMessageOptions));
     }
 
-    private void Run(Action<BrokeredMessage> callback, OnMessageOptions onMessageOptions)
+    public MessageSession AcceptMessageSession(string sessionId)
+    {
+        var session = AcceptSessionAsync(_topicPath, _subscriptionName, sessionId).GetAwaiter().GetResult();
+        return new MessageSession(session);
+    }
+
+    public void Close()
+    {
+        _messagePump?.StopAsync(_defaultToken).Wait();
+    }
+
+    private async Task RunAsync(Action<BrokeredMessage> callback, OnMessageOptions onMessageOptions)
     {
         _callback = callback;
         _messagePump = new ShimMessagePump(Receiver, InternalCallback, onMessageOptions);
-        _messagePump.Run();
+        await _messagePump.StartAsync(_defaultToken);
     }
 
     private void InternalCallback(BrokeredMessage message)
@@ -64,6 +91,12 @@ public class SubscriptionClient : ServiceBusClient, IAcknowledgeMessageClient
         message.AcknowledgeMessageClient = this;
 
         _callback?.Invoke(message);
+    }
+
+    private BrokeredMessage OnReceive()
+    {
+        var result = Receiver.ReceiveMessageAsync().GetAwaiter().GetResult();
+        return new BrokeredMessage(result);
     }
 
     public void CompleteMessage(BrokeredMessage brokeredMessage)

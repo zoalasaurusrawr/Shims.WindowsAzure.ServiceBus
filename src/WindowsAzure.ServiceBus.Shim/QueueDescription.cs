@@ -1,17 +1,28 @@
 ﻿using Microsoft.Azure.Management.ServiceBus.Models;
 
 namespace Microsoft.ServiceBus;
-public class QueueDescription : EntityDescription
+public class QueueDescription : SBQueue
 {
-    public QueueDescription(string path) 
-        : base(path)
+    public QueueDescription()
     {
     }
 
-    public QueueDescription(string path, SBQueue? entity) : this(path)
+    public QueueDescription(string path)
+        : base(name: path)
     {
-        Entity = entity;
     }
 
-    public SBQueue? Entity { get; set; }
+    public QueueDescription(SBQueue queue)
+        : base(queue.Id, queue.Name, queue.Type, queue.Location, queue.CountDetails, queue.CreatedAt, 
+            queue.UpdatedAt, queue.AccessedAt, queue.SizeInBytes, queue.MessageCount, queue.LockDuration, 
+            queue.MaxSizeInMegabytes, queue.MaxMessageSizeInKilobytes, queue.RequiresDuplicateDetection, 
+            queue.RequiresSession, queue.DefaultMessageTimeToLive, queue.DeadLetteringOnMessageExpiration, 
+            queue.DuplicateDetectionHistoryTimeWindow, queue.MaxDeliveryCount, queue.Status, queue.EnableBatchedOperations, 
+            queue.AutoDeleteOnIdle, queue.EnablePartitioning, queue.EnableExpress, queue.ForwardTo, 
+            queue.ForwardDeadLetteredMessagesTo, queue.SystemData)
+    {
+    }
+
+
+    public string Path => base.Name;
 }

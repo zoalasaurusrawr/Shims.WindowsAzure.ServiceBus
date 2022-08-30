@@ -2,22 +2,30 @@
 
 namespace Microsoft.ServiceBus;
 
-public class SubscriptionDescription
+public class SubscriptionDescription : SBSubscription
 {
+    public SubscriptionDescription()
+        : this(string.Empty, string.Empty)
+    {    
+    }
+
     public SubscriptionDescription(string topicPath, string subscriptionName)
-        : this(topicPath, subscriptionName, null)
+        : base(name: subscriptionName)
     {
+        TopicPath = topicPath;
     }
 
-    public SubscriptionDescription(string topicPath, string subscriptionName, SBSubscription? entity)
+    public SubscriptionDescription(string topicPath, SBSubscription subscription)
+        : base(subscription.Id, subscription.Name, subscription.Type, subscription.Location, subscription.MessageCount, 
+            subscription.CreatedAt, subscription.AccessedAt, subscription.UpdatedAt, subscription.CountDetails, 
+            subscription.LockDuration, subscription.RequiresSession, subscription.DefaultMessageTimeToLive, 
+            subscription.DeadLetteringOnFilterEvaluationExceptions, subscription.DeadLetteringOnMessageExpiration, 
+            subscription.DuplicateDetectionHistoryTimeWindow, subscription.MaxDeliveryCount, subscription.Status, 
+            subscription.EnableBatchedOperations, subscription.AutoDeleteOnIdle, subscription.ForwardTo, 
+            subscription.ForwardDeadLetteredMessagesTo, subscription.IsClientAffine, subscription.ClientAffineProperties, subscription.SystemData)
     {
-        TopicPath = topicPath ?? throw new ArgumentNullException(nameof(topicPath));
-        SubscriptionName = subscriptionName ?? throw new ArgumentNullException(nameof(subscriptionName));
-        Entity = entity;
+        TopicPath = topicPath;
     }
 
-    public string TopicPath { get; set; } = "";
-    public string SubscriptionName { get; set; } = "";
-
-    public SBSubscription? Entity { get; set; }
+    public string TopicPath { get; set; }
 }

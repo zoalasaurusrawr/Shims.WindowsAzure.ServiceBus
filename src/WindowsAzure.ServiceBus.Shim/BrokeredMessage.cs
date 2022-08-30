@@ -1,14 +1,14 @@
 ﻿using System.Runtime.Serialization;
-using System.Text;
-using System.Xml.Serialization;
 using Azure.Messaging.ServiceBus;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.ServiceBus.Messaging;
 
-public class BrokeredMessage : ServiceBusMessage
+public class BrokeredMessage : ServiceBusMessage, IDisposable
 {
+    public BrokeredMessage()
+    {
+    }
+
     public BrokeredMessage(string payload)
         : base(payload)
     {
@@ -18,7 +18,6 @@ public class BrokeredMessage : ServiceBusMessage
     public BrokeredMessage(object payload)
         : this(payload, (payload == null) ? null : new DataContractBinarySerializer(GetObjectType(payload)))
     {
-
     }
 
     public BrokeredMessage(object serializableObject, XmlObjectSerializer? serializer)
@@ -67,7 +66,7 @@ public class BrokeredMessage : ServiceBusMessage
     internal static readonly int MessageVersion12 = 12;
 
     internal static readonly int MessageVersion13 = 13;
-
+    public int Size = 0;
     public T? GetBody<T>()
         where T : class
     {
@@ -97,31 +96,7 @@ public class BrokeredMessage : ServiceBusMessage
             return body;
         }
 
-        var bodyString = new StreamReader(bodyStream, Encoding.UTF8).ReadToEnd();
-
-        if (TryDeserializeJsonBody<T>(bodyString, out body))
-        {
-            return body;
-        }
-        
-
         return default(T);
-    }
-
-    private bool TryDeserializeJsonBody<T>(string value, out T? body)
-    {
-        body = default(T);
-
-        try
-        {
-            var token = JToken.Parse(value);
-            body = JsonConvert.DeserializeObject<T>(value);
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
     }
 
     private bool TryDeserializeBinaryBody<T>(Stream stream, out T? body)
@@ -139,69 +114,11 @@ public class BrokeredMessage : ServiceBusMessage
         }
     }
 
-    private bool TryDeserializeBinaryBody<T>(string value, out T? body)
-    {
-        body = default(T);
-
-        try
-        {
-            body = Deserialize<T>(value);
-            return body != null;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    public static T? Deserialize<T>(string value)
-    {
-        using (Stream stream = new MemoryStream())
-        {
-            byte[] data = System.Text.Encoding.UTF8.GetBytes(value);
-            stream.Write(data, 0, data.Length);
-            stream.Position = 0;
-            var deserializer = new DataContractBinarySerializer(typeof(T));
-            return (T?)deserializer.ReadObject(stream);
-        }
-    }
-
     public static T? Deserialize<T>(Stream stream)
     {
         stream.Seek(0, SeekOrigin.Begin);
         var deserializer = new DataContractBinarySerializer(typeof(T));
         return (T?)deserializer.ReadObject(stream);
-    }
-
-    private static string XmlSerializeToString(object objectInstance)
-    {
-        var serializer = new XmlSerializer(objectInstance.GetType());
-        var sb = new StringBuilder();
-
-        using (TextWriter writer = new StringWriter(sb))
-        {
-            serializer.Serialize(writer, objectInstance);
-        }
-
-        return sb.ToString();
-    }
-
-    private static T XmlDeserializeFromString<T>(string objectData)
-    {
-        return (T)XmlDeserializeFromString(objectData, typeof(T));
-    }
-
-    private static object XmlDeserializeFromString(string objectData, Type type)
-    {
-        var serializer = new XmlSerializer(type);
-        object result;
-
-        using (TextReader reader = new StringReader(objectData))
-        {
-            result = serializer.Deserialize(reader);
-        }
-
-        return result;
     }
 
     public void Complete() 
@@ -234,5 +151,10 @@ public class BrokeredMessage : ServiceBusMessage
         }
 
         return typeof(object);
+    }
+
+    public void Dispose()
+    {
+        
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System.Text;
+using Azure.Messaging.EventHubs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.ServiceBus;
 using Microsoft.ServiceBus.Messaging;
+using Newtonsoft.Json;
 using WindowsAzure.ServiceBus.Net.Runner;
 
 class Program
@@ -10,16 +12,16 @@ class Program
     private static ServiceBusOptions? ServiceBusOptions;
     private static string ConnectionString = "";
 
-    public static void Main()
+    public static async Task Main()
     {
         Configuration = SetupConfiguration();
         ServiceBusOptions = new ServiceBusOptions();
         Configuration.GetSection("ServiceBus").Bind(ServiceBusOptions);
         ConnectionString = Configuration.GetConnectionString("AzureServiceBus");
         var namespaceManager = SetupNamespaceManager(ServiceBusOptions);
+        await StartServiceHubClient();
         StartTopicClient(namespaceManager, ServiceBusOptions);
         StartQueueClient(namespaceManager, ServiceBusOptions);
-
         Console.Read();
     }
 
@@ -46,7 +48,7 @@ class Program
 
         if (namespaceManager.QueueExists(options.QueueName))
             namespaceManager.DeleteQueue(options.QueueName);
-        namespaceManager.CreateQueue(options.QueueName);
+        var queue = namespaceManager.CreateQueue(options.QueueName);
 
         var client = QueueClient.CreateFromConnectionString(ConnectionString, options.QueueName);
         var message = new BrokeredMessage(new TestModel("Test"));
@@ -75,11 +77,11 @@ class Program
 
         if (namespaceManager.TopicExists(options.TopicName))
             namespaceManager.DeleteTopic(options.TopicName);
-        namespaceManager.CreateTopic(options.TopicName);
+        var topic = namespaceManager.CreateTopic(options.TopicName);
 
         if (namespaceManager.SubscriptionExists(options.TopicName, options.SubscriptionName))
             namespaceManager.DeleteSubscription(options.TopicName, options.SubscriptionName);
-        namespaceManager.CreateSubscription(options.TopicName, options.SubscriptionName);
+        var subscription = namespaceManager.CreateSubscription(options.TopicName, options.SubscriptionName);
 
         var client = TopicClient.CreateFromConnectionString(ConnectionString, options.TopicName);
         var message = new BrokeredMessage(new TestModel("Test"));
@@ -119,5 +121,34 @@ class Program
                 msg.Abandon();
             }
         }, onMessageOptions);
+    }
+
+    private static async Task StartServiceHubClient()
+    {
+        string EventHubConnectionString = Configuration.GetConnectionString("AzureEventHubs");
+        Console.WriteLine("Connecting to the Event Hub...");
+        var eventHubClient = EventHubClient.CreateFromConnectionString(EventHubConnectionString);
+        var runtimeInformation = await eventHubClient.GetRuntimeInformationAsync();
+        var testModel = new TestModel($"Test Message: {Guid.NewGuid()}");
+        var jsonDeviceDetail = JsonConvert.SerializeObject(testModel);
+        var encodedPayload = Encoding.UTF8.GetBytes(jsonDeviceDetail);
+        var eventData = new EventData(encodedPayload);
+        await eventHubClient.SendAsync(eventData);
+        Console.WriteLine("Sent test message");
+        EventHubConsumerGroup group = eventHubClient.GetDefaultConsumerGroup();
+        var receivers = runtimeInformation.PartitionIds.Select(s => group.CreateReceiver(s));
+
+        foreach (var receiver in receivers)
+        {
+            Console.WriteLine("Receiver created...");
+            var events = receiver.ReceiveAsync();
+            await foreach (var item in events)
+            {
+                Console.WriteLine(item.SequenceNumber);
+            }
+            Console.WriteLine("Receiving events...");
+        }
+
+        await eventHubClient.CloseAsync();
     }
 }
