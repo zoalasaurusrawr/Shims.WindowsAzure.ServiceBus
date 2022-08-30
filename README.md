@@ -62,6 +62,15 @@ WindowsAzure.ServiceBus >= 6.X
 - MessagingFactory
   - Creation of Topic, Queue, and Subscription Clients
 
+- EventHubClient
+  - Senders: EventHubSender, PartitionSender, 
+  - Receivers: EventHubReceiver, PartitionReceiver
+
+- ServiceBusConnectionStringBuilder
+  - Connection string constructor only
+  
+- BrokeredMessage
+
 ***
 
 ## Goals
