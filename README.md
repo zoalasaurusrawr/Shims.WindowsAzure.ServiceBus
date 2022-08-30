@@ -1,4 +1,4 @@
-# WindowsAzure.ServiceBus.Shims
+# Shims.WindowsAzure.ServiceBus
 
 [![.NET](https://github.com/zoeysaurusrex/Shims.WindowsAzure.ServiceBus/actions/workflows/dotnet.yml/badge.svg)](https://github.com/zoeysaurusrex/Shims.WindowsAzure.ServiceBus/actions/workflows/dotnet.yml)
 
@@ -6,6 +6,8 @@
 
 
 A path forward for WindowsAzure.ServiceBus users that are moving to modern .NET
+
+Shims.WindowsAzure.ServiceBus provides a way for WindowsAzure.ServiceBus users to move to modern .NET by providing a set of facades and interfaces utilize the latest Azure SDKs. The primary goal is to support the most common features and use cases so that replacing WindowsAzure.ServiceBus with this library can be a 1:1 drop in for most things. In the case where a usage scenario isn't supported in this library, the Azure SDK interfaces should still be accessible (i.e. EventHubSender inherits EventHubProducerClient).
 
 ## Getting Started
 
@@ -43,28 +45,36 @@ var tokenProvider = TokenProvider.CreateTokenProvider();
 
 WindowsAzure.ServiceBus >= 6.X
 - TopicClient
+  - Supported Through: Azure.Messaging.ServiceBus
   - CreateFromConnectionString
   - Send
   
 - QueueClient
+  - Supported Through: Azure.Messaging.ServiceBus
   - CreateFromConnectionString
   - Send
   
 - SubscriptionClient
+  - Supported Through: Azure.Messaging.ServiceBus
   - CreateFromConnectionString
   - Send
   
 - NamespaceManager
+  - Supported Through: Azure.ResourceManager.ServiceBus
   - Credentials through DefaultAzureCredential
   - CRUD operations for Topics, Subscriptions, and Queues (Sync and Async)
   - Entity Description
   
 - MessagingFactory
+  - Supported Through: Azure.Messaging.ServiceBus
   - Creation of Topic, Queue, and Subscription Clients
 
 - EventHubClient
+  - Supported Through: Azure.Messaging.EventHubs
   - Senders: EventHubSender, PartitionSender, 
   - Receivers: EventHubReceiver, PartitionReceiver
+
+**Rebuilt Types**
 
 - ServiceBusConnectionStringBuilder
   - Connection string constructor only
@@ -99,4 +109,4 @@ WindowsAzure.ServiceBus >= 6.X
 
 # Contribution
 
-Want to add support for to help bring parity to the shim API surface? Please do!
+Want to add support for to help bring parity to the shim API surface? Please do! You can use the "help wanted" label to see needed areas, though, helpful contributions are welcome regardless of the roadmap
