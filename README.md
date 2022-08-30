@@ -39,7 +39,6 @@ You will need to change it to this:
 var tokenProvider = TokenProvider.CreateTokenProvider();
 `
 
-***
 
 ## Compatibility
 
@@ -81,7 +80,6 @@ WindowsAzure.ServiceBus >= 6.X
   
 - BrokeredMessage
 
-***
 
 ## Goals
 
@@ -92,7 +90,6 @@ WindowsAzure.ServiceBus >= 6.X
 
 - 100% API Compatibility
 
-***
 
 ## Roadmap
 
@@ -105,7 +102,6 @@ WindowsAzure.ServiceBus >= 6.X
 - SubscriptionClient
   - Replace ShimMessagePump with a safer impl
 
-***
 
 # Contribution
 
