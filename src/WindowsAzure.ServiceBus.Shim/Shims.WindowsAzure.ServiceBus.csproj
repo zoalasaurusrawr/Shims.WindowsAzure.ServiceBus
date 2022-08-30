@@ -7,7 +7,7 @@
     <LangVersion>preview</LangVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <AssemblyVersion>6.2.2</AssemblyVersion>
-    <Version>1.0.5.0</Version>
+    <Version>1.0.7.2</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <PackageProjectUrl>https://github.com/zoeysaurusrex/WindowsAzure.ServiceBus.Shims</PackageProjectUrl>
@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Identity" Version="1.6.1" />
+    <PackageReference Include="Azure.Messaging.EventHubs" Version="5.7.2" />
     <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.10.0" />
     <PackageReference Include="Azure.ResourceManager.ServiceBus" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.Management.ServiceBus" Version="5.0.0" />
@@ -38,6 +39,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Polly" Version="7.2.3" />
     <PackageReference Include="System.Diagnostics.EventLog" Version="6.0.0" />
+    <PackageReference Include="System.Linq.Async" Version="6.0.1" />
     <PackageReference Include="System.Runtime.Caching" Version="6.0.0" />
   </ItemGroup>
 

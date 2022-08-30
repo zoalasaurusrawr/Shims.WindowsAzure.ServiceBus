@@ -34,4 +34,9 @@ public class TopicClient : ServiceBusClient
     {
         Sender.SendMessageAsync(message).Wait();
     }
+
+    public void Close()
+    {
+        Sender.CloseAsync().Wait();
+    }
 }

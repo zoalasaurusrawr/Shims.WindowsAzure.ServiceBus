@@ -1,14 +1,14 @@
 ﻿using System.Runtime.Serialization;
-using System.Text;
-using System.Xml.Serialization;
 using Azure.Messaging.ServiceBus;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.ServiceBus.Messaging;
 
-public class BrokeredMessage : ServiceBusMessage
+public class BrokeredMessage : ServiceBusMessage, IDisposable
 {
+    public BrokeredMessage()
+    {
+    }
+
     public BrokeredMessage(string payload)
         : base(payload)
     {
@@ -18,7 +18,6 @@ public class BrokeredMessage : ServiceBusMessage
     public BrokeredMessage(object payload)
         : this(payload, (payload == null) ? null : new DataContractBinarySerializer(GetObjectType(payload)))
     {
-
     }
 
     public BrokeredMessage(object serializableObject, XmlObjectSerializer? serializer)
@@ -67,7 +66,7 @@ public class BrokeredMessage : ServiceBusMessage
     internal static readonly int MessageVersion12 = 12;
 
     internal static readonly int MessageVersion13 = 13;
-
+    public int Size = 0;
     public T? GetBody<T>()
         where T : class
     {
@@ -152,5 +151,10 @@ public class BrokeredMessage : ServiceBusMessage
         }
 
         return typeof(object);
+    }
+
+    public void Dispose()
+    {
+        
     }
 }
